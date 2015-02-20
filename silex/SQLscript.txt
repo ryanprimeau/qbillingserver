@@ -1,0 +1,36 @@
+DROP TABLE IF EXISTS `user_profiles`;
+DROP TABLE IF EXISTS `patient_bill`;
+
+
+CREATE TABLE `user_profiles`(
+	`id` int(64) NOT NULL AUTO_INCREMENT,	`fullName` varchar(255) NOT NULL,	`emailAddress` varchar(255) unique NOT NULL,
+	`password` varchar(255),	PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8AUTO_INCREMENT=1;
+
+CREATE TABLE `patient_bill`(
+	`billId` int(11) NOT NULL AUTO_INCREMENT,
+	`userID` int(11) NOT NULL,	`patientFullName` varchar(255),
+	`ramq` varchar(255),
+	`phone` varchar(255),	`date` date NOT NULL,
+	`hospital` varchar(255),
+	`location` varchar(255),
+	`visitCode` varchar(255),
+	`referringphysician` varchar(255),
+	`diagnosis` varchar(255),
+	`precedures` varchar(555),
+	`startTime` date,
+	`endTime` date,
+	`note` varchar(555),
+	`completedFlag` int(1) NOT NULL DEFAULT 0,
+	`billedFlag` int(1) NOT NULL DEFAULT 0,
+	`image` MEDIUMBLOB,
+	PRIMARY KEY (`billId`),
+	FOREIGN KEY (userID) REFERENCES user_profiles(id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8AUTO_INCREMENT=1;
+
+
+
