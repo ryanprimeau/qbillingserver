@@ -56,7 +56,6 @@ $app->get('/getAllusers', function() use($app){
 $app->get('/authentication', function (Request $request) use($app){
   $email = $request->headers->get("Php-Auth-User");
   $password = $request->headers->get("Php-Auth-Pw");
-
   $sql = "SELECT count(*) FROM user_profiles WHERE emailAddress = ? AND password = ?";
   //Is this safe from SQL Injection??
   $post = $app['db']->fetchAssoc($sql, array($email,$password));
@@ -69,18 +68,14 @@ $app->get('/authentication', function (Request $request) use($app){
 
 //Billable Manipulation API
 $app->post('/billables', function (Request $request) use($app){
-  
   $billings = $request->request->get('billings');
-  
+  $returnArray = array();  
   foreach ($billings as $bill) {
-    //$date = new DateTime();
-    //var_dump($bill["medicalKey"]);
     $s = $app['db']->insert('patient_bill', array('userID' => 1,'ramq' => $bill["medicalKey"],'patientFullName'=>$bill["name"], 'phone' => $bill["phone"], 'date' => $bill["date"], 'precedures' => $bill["precedures"],
     'diagnosis'=>$bill["diagnosis"], 'referringphysician' => $bill["referringphysician"], 'image' => $bill["labelPhotoData"]));
+    $returnArray[$bill["localKey"]] = $app['db']->lastInsertId(); 
   }
-  
-  //"top"=>$billings
-  return $app->json(array("h"=>$s));
+  return $app->json(array("results"=>$returnArray));
 });
 
 
