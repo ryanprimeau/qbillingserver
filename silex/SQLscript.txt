@@ -1,27 +1,28 @@
-DROP TABLE IF EXISTS `user_profiles`;
 DROP TABLE IF EXISTS `patient_bill`;
+DROP TABLE IF EXISTS `user_profiles`;
 
 
 CREATE TABLE `user_profiles`(
-	`id` int(64) NOT NULL AUTO_INCREMENT,	`fullName` varchar(255) NOT NULL,	`emailAddress` varchar(255) unique NOT NULL,
+	`id` int(32) NOT NULL AUTO_INCREMENT,	`fullName` varchar(255) NOT NULL,	`emailAddress` varchar(255) unique NOT NULL,
 	`password` varchar(255),	PRIMARY KEY (`id`)
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8AUTO_INCREMENT=1;
 
 CREATE TABLE `patient_bill`(
-	`billId` int(11) NOT NULL AUTO_INCREMENT,
-	`userID` int(11) NOT NULL,	`patientFullName` varchar(255),
+	`billId` int(32) NOT NULL AUTO_INCREMENT,
+	`userID` int(32) NOT NULL,
+	`patientFullName` varchar(255),
 	`ramq` varchar(255),
-	`phone` varchar(255),	`date` date NOT NULL,
+	`phone` varchar(255),	`date` varchar(255),
 	`hospital` varchar(255),
 	`location` varchar(255),
 	`visitCode` varchar(255),
 	`referringphysician` varchar(255),
 	`diagnosis` varchar(255),
 	`precedures` varchar(555),
-	`startTime` date,
-	`endTime` date,
+	`startTime` varchar(255),
+	`endTime` varchar(255),
 	`note` varchar(555),
 	`completedFlag` int(1) NOT NULL DEFAULT 0,
 	`billedFlag` int(1) NOT NULL DEFAULT 0,
@@ -31,6 +32,3 @@ CREATE TABLE `patient_bill`(
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8AUTO_INCREMENT=1;
-
-
-

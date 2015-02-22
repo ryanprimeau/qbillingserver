@@ -55,29 +55,31 @@ $app->get('/getAllusers', function() use($app){
 //Authentication API
 $app->get('/authentication', function (Request $request) use($app){
   $email = $request->headers->get("Php-Auth-User");
-  $sql = "SELECT count(*) FROM user_profiles WHERE emailAddress = ?";
+  $password = $request->headers->get("Php-Auth-Pw");
+
+  $sql = "SELECT count(*) FROM user_profiles WHERE emailAddress = ? AND password = ?";
   //Is this safe from SQL Injection??
-  $post = $app['db']->fetchAssoc($sql, array($email));
-  $returnArray = array("success"=>0);
+  $post = $app['db']->fetchAssoc($sql, array($email,$password));
+  $returnArray = array("success"=>false);
   if($post["count(*)"]>0){
-    $returnArray["success"] = 1;
+    $returnArray["success"] = true;
   }
   return $app->json($returnArray);
 });
 
 //Billable Manipulation API
 $app->post('/billables', function (Request $request) use($app){
-  $post = array(
-      'email' => $request->request->get('email'),
-  );
   
   $billings = $request->request->get('billings');
   
   foreach ($billings as $bill) {
-    var_dump($bill);
+    //$date = new DateTime();
+    //var_dump($bill["medicalKey"]);
+    $app['db']->insert('patient_bill', array('userID' => 1,'ramq' => $bill["medicalKey"],'patientFullName'=>$bill["name"], 'phone' => $bill["phone"], 'date' => $bill["date"], 'precedures' => $bill["precedures"],
+    'diagnosis'=>$bill["diagnosis"], 'referringphysician' => $bill["referringphysician"]));
   }
-    
-  return $app->json($post);
+  
+  return $app->json(array("top"=>$billings));
 });
 
 
