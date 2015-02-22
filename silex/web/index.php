@@ -75,11 +75,12 @@ $app->post('/billables', function (Request $request) use($app){
   foreach ($billings as $bill) {
     //$date = new DateTime();
     //var_dump($bill["medicalKey"]);
-    $app['db']->insert('patient_bill', array('userID' => 1,'ramq' => $bill["medicalKey"],'patientFullName'=>$bill["name"], 'phone' => $bill["phone"], 'date' => $bill["date"], 'precedures' => $bill["precedures"],
-    'diagnosis'=>$bill["diagnosis"], 'referringphysician' => $bill["referringphysician"]));
+    $s = $app['db']->insert('patient_bill', array('userID' => 1,'ramq' => $bill["medicalKey"],'patientFullName'=>$bill["name"], 'phone' => $bill["phone"], 'date' => $bill["date"], 'precedures' => $bill["precedures"],
+    'diagnosis'=>$bill["diagnosis"], 'referringphysician' => $bill["referringphysician"], 'image' => $bill["labelPhotoData"]));
   }
   
-  return $app->json(array("top"=>$billings));
+  //"top"=>$billings
+  return $app->json(array("h"=>$s));
 });
 
 
