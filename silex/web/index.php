@@ -43,6 +43,13 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
 ));
 
 
+
+$app->get('/', function() use($app){
+  return $app->json("hello");
+});
+
+
+
 $app->get('/getAllusers', function() use($app){
   $sql = "SELECT id,fullName FROM user_profiles";
   //var_dump($conn);
@@ -70,12 +77,46 @@ $app->get('/authentication', function (Request $request) use($app){
 $app->post('/billables', function (Request $request) use($app){
   $billings = $request->request->get('billings');
   $returnArray = array();  
+  $returnArray["created"] = array();
+  $returnArray["updated"] = array();
+  $returnArray["deleted"] = array();
+
   foreach ($billings as $bill) {
-    $s = $app['db']->insert('patient_bill', array('userID' => 1,'ramq' => $bill["medicalKey"],'patientFullName'=>$bill["name"], 'phone' => $bill["phone"], 'date' => $bill["date"], 'precedures' => $bill["precedures"],
-    'diagnosis'=>$bill["diagnosis"], 'referringphysician' => $bill["referringphysician"], 'image' => $bill["labelPhotoData"]));
-    $returnArray[$bill["localKey"]] = $app['db']->lastInsertId(); 
+    
+    
+    $bill_array = array("billedFlag" => $bill["billed"],
+    "completedFlag" => $bill["completed"],
+    "date" => $bill["date"],
+    "diagnosis" => $bill["diagnosis"],
+    "endTime" => $bill["endTime"],
+    "hospital" => $bill["hospital"],
+    "image" => $bill["labelPhotoData"],
+    "location" => $bill["location"],
+    "ramq" => $bill["medicalKey"],
+    "patientFullName" => $bill["name"],
+    "phone" => $bill["phone"],
+    "precedures" => $bill["precedures"],
+    "referringphysician" => $bill["referringphysician"],
+    "note" => $bill["specialNote"],
+    "startTime" => $bill["startTime"],
+    "visitCode" => $bill["visitcode"]);
+    
+    
+    if($bill['status'] == "create"){
+      $bill_array['userID'] = 1;
+      $s = $app['db']->insert('patient_bill',$bill_array);
+      $returnArray["created"][] = array("localKey" => $bill["localKey"],"serverPrimaryKey" => (int)$app['db']->lastInsertId()); 
+    }
+    if($bill['status'] == "update"){
+      $app['db']->update('patient_bill',$bill_array,array('billId' => (int)$bill["serverPrimaryKey"]));
+      $returnArray["updated"][] = array("localKey" => $bill["localKey"]);
+    }
+    if($bill['status'] == "delete"){
+      $app['db']->delete('patient_bill', array('billId' => (int)$bill["serverPrimaryKey"]));
+      $returnArray["deleted"][] = array("localKey" => $bill["localKey"]); 
+    }
   }
-  return $app->json(array("results"=>$returnArray));
+  return $app->json(array("success"=>1,"results"=>$returnArray));
 });
 
 
