@@ -32,3 +32,45 @@ CREATE TABLE `patient_bill`(
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8AUTO_INCREMENT=1;
+
+
+
+DROP TABLE IF EXISTS `network`;
+DROP TABLE IF EXISTS `user`;
+
+CREATE TABLE `network`(
+	`network_id` int(32) NOT NULL AUTO_INCREMENT,
+	`network_name` varchar(255),
+	`network_signature` varchar(255),
+	`network_password` varchar(255),
+	`creation_date` varchar(255),
+	`admin_email` varchar(255),
+	`is_active` int(1) DEFAULT 1,
+	`password` varchar(255),
+	PRIMARY KEY (`network_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+AUTO_INCREMENT=1;
+
+
+CREATE TABLE `user`(
+	`user_id` int(32) NOT NULL AUTO_INCREMENT,
+	`login_email` varchar(255) NOT NULL,
+	`password` varchar(255) NOT NULL,
+	`user_name` varchar(255) NOT NULL,
+	`network_id` int(32) NOT NULL,
+	`role_id` varchar(255) NOT NULL,
+	`registered_email` varchar(255) NOT NULL,
+	`is_email_registered` varchar(255) NOT NULL,
+	`creation_date` varchar(255) NOT NULL,
+	PRIMARY KEY (`user_id`)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+AUTO_INCREMENT=1;
+
+INSERT INTO `network` VALUES (NULL)
+
+
+INSERT INTO `user` VALUES (NULL, 'ryanprimeau@outlook.com','5f4dcc3b5aa765d61d8327deb882cf99','ryanprimeau@outlook.com',1,'1','ryanprimeau@outlook.com','1','1');

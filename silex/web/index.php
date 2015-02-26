@@ -42,13 +42,9 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => $connectionParams,
 ));
 
-
-
 $app->get('/', function() use($app){
   return $app->json("hello");
 });
-
-
 
 $app->get('/getAllusers', function() use($app){
   $sql = "SELECT id,fullName FROM user_profiles";
@@ -73,8 +69,45 @@ $app->get('/authentication', function (Request $request) use($app){
   return $app->json($returnArray);
 });
 
+
+
+//Billable Get API
+$app->get('/billables', function (Request $request) use($app){
+  
+  $email = $request->headers->get("Php-Auth-User");
+  $password = $request->headers->get("Php-Auth-Pw");
+  
+  $sql = "SELECT id FROM user_profiles WHERE emailAddress = ? AND password = ?";
+  $check = $app['db']->fetchAll($sql, array($email,$password));
+
+  if(count($check) == 1){
+    $sql = "SELECT * FROM patient_bill WHERE userID = ?";
+    $results = $app['db']->fetchAll($sql,array((int)$check[0]["id"]));
+    return $app->json(array("success"=>1,"results"=>$results));
+  }
+  return $app->json(array("success"=>0));
+});
+
+
+
 //Billable Manipulation API
 $app->post('/billables', function (Request $request) use($app){
+  
+  
+  
+  $email = $request->headers->get("Php-Auth-User");
+  $password = $request->headers->get("Php-Auth-Pw");
+  
+  $sql = "SELECT id FROM user_profiles WHERE emailAddress = ? AND password = ?";
+  $check = $app['db']->fetchAll($sql, array($email,$password));
+  
+  if(count($check) != 1){
+    return $app->json(array("success"=>0));
+  }
+  
+  $id = (int)$check[0]["id"];
+  
+  
   $billings = $request->request->get('billings');
   $returnArray = array();  
   $returnArray["created"] = array();
@@ -82,8 +115,6 @@ $app->post('/billables', function (Request $request) use($app){
   $returnArray["deleted"] = array();
 
   foreach ($billings as $bill) {
-    
-    
     $bill_array = array("billedFlag" => $bill["billed"],
     "completedFlag" => $bill["completed"],
     "date" => $bill["date"],
@@ -101,9 +132,8 @@ $app->post('/billables', function (Request $request) use($app){
     "startTime" => $bill["startTime"],
     "visitCode" => $bill["visitcode"]);
     
-    
     if($bill['status'] == "create"){
-      $bill_array['userID'] = 1;
+      $bill_array['userID'] = $id ;
       $s = $app['db']->insert('patient_bill',$bill_array);
       $returnArray["created"][] = array("localKey" => $bill["localKey"],"serverPrimaryKey" => (int)$app['db']->lastInsertId()); 
     }
