@@ -70,7 +70,22 @@ ENGINE=InnoDB
 DEFAULT CHARSET=utf8
 AUTO_INCREMENT=1;
 
-INSERT INTO `network` VALUES (NULL)
+
+CREATE TABLE `personalize`(
+	`user_id` int(32) NOT NULL AUTO_INCREMENT,
+	`personal_signature` varchar(255),
+	`signature_image` MEDIUMBLOB,
+	PRIMARY KEY (`user_id`)
+
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8
+AUTO_INCREMENT=1;
 
 
+
+
+
+INSERT INTO `network` VALUES (NULL,'ryan',NULL,NULL,NULL,NULL,true,NULL);
 INSERT INTO `user` VALUES (NULL, 'ryanprimeau@outlook.com','5f4dcc3b5aa765d61d8327deb882cf99','ryanprimeau@outlook.com',1,'1','ryanprimeau@outlook.com','1','1');
+INSERT INTO `personalize` VALUES (1, "hi", NULL);

@@ -29,6 +29,10 @@ $app->before(function (Request $request) {
 });
 
 $config = new \Doctrine\DBAL\Configuration();
+
+
+// Development
+/* Development
 $connectionParams = array(
     'user' => 'pbuser',
     'password' => 'pbpassword',
@@ -38,6 +42,18 @@ $connectionParams = array(
     'unix_socket' => '/tmp/mysql.sock',
     'driver' => 'pdo_mysql'
 );
+*/
+// Production
+$connectionParams = array(
+    'user' => 'pbuser',
+    'password' => 'pbpassword',
+    'host' => 'qbilling.cesofi1lg9dc.us-east-1.rds.amazonaws.com',
+    'port' => '3306',
+    'dbname' => 'innodb',
+    'driver' => 'pdo_mysql'
+);
+
+
 $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => $connectionParams,
 ));
