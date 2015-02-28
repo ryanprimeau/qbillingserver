@@ -100,7 +100,6 @@ $app->get('/billables', function (Request $request) use($app){
   $email = $request->headers->get("Php-Auth-User");
   $password = $request->headers->get("Php-Auth-Pw");
   $password = $app['password_encoder']->encodePassword($password,'');
-  var_dump($password);
 
 
   $sql = "SELECT id FROM user_profiles WHERE emailAddress = ? AND password = ?";
