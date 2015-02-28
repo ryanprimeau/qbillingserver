@@ -1,7 +1,5 @@
 <?php
 
-
-// web/index.php
 require_once __DIR__.'/../vendor/autoload.php'; 
 
 use Symfony\Component\Debug\ErrorHandler;
@@ -9,6 +7,9 @@ use Symfony\Component\Debug\Debug;
 use Symfony\Component\Debug\ExceptionHandler;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
+
+
+use Symfony\Component\Security\Core\Encoder\MessageDigestPasswordEncoder;
 
 // set the error handling
 ini_set('display_errors', 1);
@@ -58,8 +59,12 @@ $app->register(new Silex\Provider\DoctrineServiceProvider(), array(
     'db.options' => $connectionParams,
 ));
 
+$app['password_encoder'] = new MessageDigestPasswordEncoder();
+
+
+
 $app->get('/', function() use($app){
-  return $app->json("hello");
+  return "hello";
 });
 
 $app->get('/getAllusers', function() use($app){
@@ -75,6 +80,8 @@ $app->get('/getAllusers', function() use($app){
 $app->get('/authentication', function (Request $request) use($app){
   $email = $request->headers->get("Php-Auth-User");
   $password = $request->headers->get("Php-Auth-Pw");
+  $password = $app['password_encoder']->encodePassword($password,'');
+  
   $sql = "SELECT count(*) FROM user_profiles WHERE emailAddress = ? AND password = ?";
   //Is this safe from SQL Injection??
   $post = $app['db']->fetchAssoc($sql, array($email,$password));
@@ -92,7 +99,10 @@ $app->get('/billables', function (Request $request) use($app){
   
   $email = $request->headers->get("Php-Auth-User");
   $password = $request->headers->get("Php-Auth-Pw");
-  
+  $password = $app['password_encoder']->encodePassword($password,'');
+  var_dump($password);
+
+
   $sql = "SELECT id FROM user_profiles WHERE emailAddress = ? AND password = ?";
   $check = $app['db']->fetchAll($sql, array($email,$password));
 
@@ -113,6 +123,8 @@ $app->post('/billables', function (Request $request) use($app){
   
   $email = $request->headers->get("Php-Auth-User");
   $password = $request->headers->get("Php-Auth-Pw");
+  $password = $app['password_encoder']->encodePassword($password,'');
+
   
   $sql = "SELECT id FROM user_profiles WHERE emailAddress = ? AND password = ?";
   $check = $app['db']->fetchAll($sql, array($email,$password));
